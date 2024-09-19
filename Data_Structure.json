@@ -1,0 +1,33 @@
+//garden/pub
+{
+    "gardens": {
+        "Garden1": {
+            "plants": [
+                {
+                    "name": "Cempacuchil",
+                    "humidity": 11,
+                    "temperature": 15
+                },
+                {
+                    "name": "Habanero",
+                    "humidity": 11,
+                    "temperature": 15
+                }
+            ]
+        },
+        "Garden2": {
+            "plants": [
+                {
+                    "name": "Orquídea",
+                    "humidity": 20,
+                    "temperature": 18
+                },
+                {
+                    "name": "Suculenta",
+                    "humidity": 30,
+                    "temperature": 22
+                }
+            ]
+        }
+    }
+}
