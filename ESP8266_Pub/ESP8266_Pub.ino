@@ -1,4 +1,4 @@
-// Example for ES8266
+ // Example for ES8266
 // Tutorial: https://how2electronics.com/connecting-esp8266-to-amazon-aws-iot-core-using-mqtt/
 // Modified by: YoshiDev22 18-09-2024
 #include <ESP8266WiFi.h>
@@ -22,7 +22,7 @@ unsigned long previousMillis = 0;
 const long interval = 5000;
 
 // MQTT TOPICs
-#define AWS_IOT_PUBLISH_TOPIC   "garden/pub"
+#define AWS_IOT_PUBLISH_TOPIC   "gardens/garage"
 #define AWS_IOT_SUBSCRIBE_TOPIC "esp8266/sub"
  
 WiFiClientSecure net;
@@ -115,8 +115,8 @@ void publishMessage()
 {
   StaticJsonDocument<200> doc;
   doc["time"] = millis();
-  doc["humidity"] = h;
-  doc["temperature"] = t;
+  doc["plant"] = h;
+  doc["soil_moisture_percent"] = t;
   char jsonBuffer[512];
   serializeJson(doc, jsonBuffer); // print to client
  
