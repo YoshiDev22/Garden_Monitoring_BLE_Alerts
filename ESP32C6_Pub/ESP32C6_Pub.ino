@@ -2,6 +2,8 @@
     Followed tutorials:
     https://aws.amazon.com/es/blogs/compute/building-an-aws-iot-core-device-using-aws-serverless-and-an-esp32/
     https://how2electronics.com/connecting-esp32-to-amazon-aws-iot-core-using-mqtt/
+
+    Modified by: YoshiDev22 22-09-2024
 */
 
 #include "secrets.h"
@@ -15,11 +17,16 @@
 #define DHTPIN 14     // Digital pin connected to the DHT sensor
 #define DHTTYPE DHT11   // DHT 11
  
-#define AWS_IOT_PUBLISH_TOPIC   "garden/pub"
+#define AWS_IOT_PUBLISH_TOPIC   "gardens/garage"
 #define AWS_IOT_SUBSCRIBE_TOPIC "esp32/sub"
  
 float h ;
 float t;
+
+const int AirValue = 2225;    //you need to replace this value by the air reading
+const int WaterValue = 880;   //you need to replace this value with the reading in pure water
+int soilMoistureValue = 0;    //initial value for reading
+int soilMoisturePercent = 0;  //initial value for reading
  
 //DHT dht(DHTPIN, DHTTYPE);
  
@@ -73,8 +80,8 @@ void connectAWS()
 void publishMessage()
 {
   StaticJsonDocument<200> doc;
-  doc["humidity"] = h;
-  doc["temperature"] = t;
+  doc["soil_moisture"] = soilMoistureValue;
+  doc["soil_moisture_percent"] = soilMoisturePercent;
   char jsonBuffer[512];
   serializeJson(doc, jsonBuffer); // print to client
  
@@ -103,8 +110,23 @@ void loop()
 {
   h = 11;
   t = 15;
- 
- 
+  //read soil moisture
+  soilMoistureValue = analogRead(4);  //put Sensor insert into soil
+  Serial.println(soilMoistureValue);
+  soilMoisturePercent = map(soilMoistureValue, AirValue, WaterValue, 0, 100);
+  Serial.print(soilMoisturePercent);
+  Serial.println("%");
+  if (soilMoisturePercent >= 100) {
+    soilMoisturePercent=100;
+    Serial.println("100 %");
+  } else if (soilMoisturePercent <= 0) {
+    soilMoisturePercent=0;
+    Serial.println("0 %");
+  } else if (soilMoisturePercent > 0 && soilMoisturePercent < 100) {
+    Serial.print(soilMoisturePercent);
+    Serial.println("%");
+  }
+  /*
   if (isnan(h) || isnan(t) )  // Check if any reads failed and exit early (to try again).
   {
     Serial.println(F("Failed to read from DHT sensor!"));
@@ -116,7 +138,7 @@ void loop()
   Serial.print(F("%  Temperature: "));
   Serial.print(t);
   Serial.println(F("°C "));
- 
+ */
   publishMessage();
   client.loop();
   delay(1000);
